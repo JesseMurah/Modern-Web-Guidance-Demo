@@ -1,0 +1,396 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta
+            name="viewport"
+            content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes"
+        />
+        <meta name="theme-color" content="#4F7DC9" />
+        <meta charset="UTF-8" />
+        <title>Stop Prompting Like It's 2020: Upgrading AI Agents with Modern Web Guidance</title>
+        <link
+            rel="stylesheet"
+            href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono"
+        />
+        <link
+            rel="stylesheet"
+            href="//fonts.googleapis.com/icon?family=Material+Icons"
+        />
+        <link
+            rel="stylesheet"
+            href="https://storage.googleapis.com/claat-public/codelab-elements.css"
+        />
+        <style>
+            .success {
+                color: #1e8e3e;
+            }
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <google-codelab-analytics
+            gaid="UA-49880327-14"
+            ga4id=""
+        ></google-codelab-analytics>
+        <google-codelab
+            codelab-gaid=""
+            codelab-ga4id=""
+            id="docs"
+            title="Stop Prompting Like It's 2020: Upgrading AI Agents with Modern Web Guidance"
+            environment="web"
+        >
+            <google-codelab-step label="Overview" duration="1">
+                <p>
+                    If you ask a standard AI coding assistant to build a dropdown menu or a modal,
+                    it will write code like it's 2020.
+                </p>
+                <p>At <strong>Google I/O 2026</strong>, Philip Walton demonstrated this perfectly:</p>
+                <ul>
+                    <li>
+                        <strong>Unguided AI:</strong> Built a simple dropdown using
+                        <strong>172 KB</strong> of JavaScript (minified and gzipped).
+                    </li>
+                    <li>
+                        <strong>Guided AI:</strong> Built the exact same dropdown using
+                        <strong>less than 3 KB</strong> and <strong>zero JavaScript</strong>.
+                    </li>
+                </ul>
+                <p>
+                    AI models are trained on the entire history of the web — millions of outdated
+                    StackOverflow answers and legacy tutorials. When prompted, they default to heavy
+                    JavaScript solutions instead of modern HTML/CSS APIs.
+                </p>
+                <p>
+                    <strong>Modern Web Guidance</strong> is an "upgrade patch" for your AI's brain.
+                    It is an evergreen, expert-vetted set of skills that intercepts your prompts and
+                    forces the AI to use native, high-performance web standards.
+                </p>
+
+                <p><strong>What you'll learn:</strong></p>
+                <ul>
+                    <li>Install Modern Web Guidance and lock in a Baseline target for cross-browser safety.</li>
+                    <li>Use the <strong>Popover API</strong> and <strong>CSS Anchor Positioning</strong> to build a zero-JS tooltip.</li>
+                    <li>Use <strong><code>scheduler.yield()</code></strong> to fix Interaction to Next Paint (INP) on a heavy data task.</li>
+                    <li>Measure the bundle-size impact in Chrome DevTools.</li>
+                </ul>
+
+                <p><strong>Prerequisites:</strong></p>
+                <ul>
+                    <li>Basic knowledge of HTML/CSS/JavaScript</li>
+                    <li>Node.js installed</li>
+                    <li>A modern browser (Chrome recommended)</li>
+                </ul>
+
+                <p>Duration: 17 minutes</p>
+            </google-codelab-step>
+
+            <google-codelab-step label="Act 1: Install Modern Web Guidance" duration="3">
+                <p><em>Goal: Show how easy it is to install and secure cross-browser compatibility.</em></p>
+
+                <h2>Step 1: Clone the demo project</h2>
+                <pre><code language="language-sh" class="language-sh">git clone https://github.com/JesseMurah/Modern-Web-Guidance-Demo.git
+cd Modern-Web-Guidance-Demo</code></pre>
+
+                <h2>Step 2: Install Modern Web Guidance</h2>
+                <pre><code language="language-sh" class="language-sh">npx modern-web-guidance@latest install</code></pre>
+                <p>
+                    This creates an <code>AGENTS.md</code> (or <code>.agents/</code> config) file in your project root.
+                    Open it.
+                </p>
+
+                <h2>Step 3: Set your Baseline target</h2>
+                <p>Add the following to your <code>AGENTS.md</code>:</p>
+                <pre><code language="language-markdown" class="language-markdown"># Project Constraints
+- Baseline target: Baseline Widely Available</code></pre>
+
+                <p>
+                    <strong>Talking Point:</strong> "By defining our Baseline, we guarantee the AI won't break
+                    the application for users on older mobile devices or edge networks. If we ask for
+                    bleeding-edge features, the AI will automatically handle the fallbacks."
+                </p>
+            </google-codelab-step>
+
+            <google-codelab-step label="Act 2: Zero-JS Tooltips" duration="7">
+                <p><em>Goal: Demonstrate how modern CSS eliminates complex UI state management.</em></p>
+                <p>
+                    <strong>Scenario:</strong> We need a tooltip for a transaction fee icon on a B2B payment ledger.
+                </p>
+
+                <h2>Step 1: Prompt your AI agent</h2>
+                <pre><code>Create an interest-triggered-tooltip for a transaction fee button.
+The tooltip should appear when hovering or focusing the button,
+and it must stay perfectly anchored to the top of the button
+without using any custom JavaScript math for positioning.</code></pre>
+
+                <h2>Step 2: The Reveal</h2>
+                <p>
+                    With Modern Web Guidance active, the AI produces <strong>zero JavaScript</strong>
+                    and uses two native browser APIs.
+                </p>
+
+                <h3>Popover API — automatic z-index layering and light dismiss</h3>
+                <pre><code language="language-html" class="language-html">&lt;button popovertarget="fee-tooltip"&gt;
+  Transaction Fee ⓘ
+&lt;/button&gt;
+
+&lt;div id="fee-tooltip" popover&gt;
+  A 1.5% processing fee applies to all international transfers.
+&lt;/div&gt;</code></pre>
+
+                <h3>CSS Anchor Positioning — glues tooltip to button during scroll</h3>
+                <pre><code language="language-css" class="language-css">[popovertarget] {
+  anchor-name: --fee-btn;
+}
+
+#fee-tooltip {
+  position-anchor: --fee-btn;
+  top: anchor(top);
+  left: anchor(center);
+  translate: -50% -110%;
+}</code></pre>
+
+                <p><strong>Point out two things:</strong></p>
+                <ol>
+                    <li>
+                        <code>popover</code> gives automatic z-index management and click-outside dismiss
+                        — no JavaScript needed.
+                    </li>
+                    <li>
+                        <code>anchor()</code> replaces <code>getBoundingClientRect()</code> loops and
+                        <code>resize</code> listeners — the tooltip stays anchored during scroll with
+                        <strong>0 lines of JavaScript</strong>.
+                    </li>
+                </ol>
+            </google-codelab-step>
+
+            <google-codelab-step label="Act 3: Fixing INP with scheduler.yield()" duration="5">
+                <p><em>Goal: Show how the AI handles advanced main-thread optimization.</em></p>
+                <p>
+                    <strong>Scenario:</strong> A heavy data-processing function parsing a massive JSON payload
+                    of transactions freezes the UI. If a user clicks while this runs, the dashboard freezes —
+                    ruining the Interaction to Next Paint (INP) score.
+                </p>
+
+                <h2>Step 1: Prompt your AI agent</h2>
+                <pre><code>I have a massive array of 50,000 transaction records that I need
+to process and render. Write a function to break-up-long-tasks
+so it doesn't freeze the main thread and ruin our
+Interaction to Next Paint (INP) score.</code></pre>
+
+                <h2>Step 2: The Reveal</h2>
+                <p>
+                    Without guidance, the AI writes a messy <code>setTimeout</code> hack.
+                    With Modern Web Guidance, the AI uses the modern <strong><code>scheduler.yield()</code></strong> API:
+                </p>
+                <pre><code language="language-js" class="language-js">async function processTransactions(records) {
+  const CHUNK_SIZE = 500;
+
+  for (let i = 0; i &lt; records.length; i += CHUNK_SIZE) {
+    const chunk = records.slice(i, i + CHUNK_SIZE);
+    renderChunk(chunk);
+
+    // Yield to the browser between chunks
+    await scheduler.yield();
+  }
+}</code></pre>
+
+                <p>
+                    <strong>Talking Point:</strong> "The AI wrote a loop that processes a chunk of transactions,
+                    calls <code>await scheduler.yield()</code>, and tells the browser:
+                    <em>'If the user clicked anything, handle it now, then come back and finish parsing.'</em>
+                    It instantly fixes your INP score."
+                </p>
+            </google-codelab-step>
+
+            <google-codelab-step label="Act 4: The Bundle Size Reveal" duration="2">
+                <p><em>Goal: Drop the mic.</em></p>
+
+                <h2>Open Chrome DevTools → Network Tab</h2>
+                <p>Filter by <strong>JS</strong> and compare the two approaches:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Approach</th>
+                            <th>JS Bundle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Unguided AI (tooltip + task scheduler)</td>
+                            <td>~172 KB</td>
+                        </tr>
+                        <tr>
+                            <td>Guided AI (Popover API + scheduler.yield())</td>
+                            <td>&lt; 3 KB</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    <strong>Talking Point:</strong> "We just built complex UI physics and advanced main-thread
+                    task scheduling. Because we used the browser's native engine instead of third-party libraries,
+                    our JavaScript bundle size is basically zero. This is how you ship lean, performant web apps."
+                </p>
+            </google-codelab-step>
+
+            <google-codelab-step label="Bonus: Native Passkeys (WebAuthn)" duration="0">
+                <p>
+                    Passwords are a liability for financial platforms. Modern Web Guidance makes
+                    implementing biometric passkeys simple.
+                </p>
+
+                <h2>Prompt</h2>
+                <pre><code>Create a client-side JavaScript function to register a new user
+using a passkey. Return the credential payload to send to my backend.</code></pre>
+
+                <h2>What the guided AI produces</h2>
+                <p>The AI automatically:</p>
+                <ol>
+                    <li>
+                        Expects the cryptographic challenge to come from the <strong>server</strong>
+                        (preventing client-side spoofing).
+                    </li>
+                    <li>
+                        Provides a utility to serialize the raw <code>ArrayBuffer</code> data into
+                        <strong>Base64URL</strong> so the backend JSON parser doesn't crash.
+                    </li>
+                </ol>
+                <pre><code language="language-js" class="language-js">async function registerPasskey(username) {
+  // Challenge must come from server — never generate client-side
+  const { challenge, userId } = await fetch('/api/passkey/register-options', {
+    method: 'POST',
+    body: JSON.stringify({ username }),
+  }).then(r => r.json());
+
+  const credential = await navigator.credentials.create({
+    publicKey: {
+      challenge: base64urlToBuffer(challenge),
+      rp: { name: 'My App' },
+      user: {
+        id: base64urlToBuffer(userId),
+        name: username,
+        displayName: username,
+      },
+      pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+      authenticatorSelection: { userVerification: 'required' },
+    },
+  });
+
+  return {
+    id: credential.id,
+    rawId: bufferToBase64url(credential.rawId),
+    response: {
+      clientDataJSON: bufferToBase64url(credential.response.clientDataJSON),
+      attestationObject: bufferToBase64url(credential.response.attestationObject),
+    },
+  };
+}</code></pre>
+            </google-codelab-step>
+
+            <google-codelab-step label="Bonus: Network Priority" duration="0">
+                <p>
+                    When loading a dashboard on a constrained network, background analytics
+                    can block critical data fetches.
+                </p>
+
+                <h2>Prompt</h2>
+                <pre><code>Deprioritize background data fetches made with the Fetch API
+to prevent network contention with user-initiated requests.</code></pre>
+
+                <h2>What the guided AI produces</h2>
+                <pre><code language="language-js" class="language-js">// Critical user-initiated fetch — default priority
+const dashboardData = await fetch('/api/dashboard');
+
+// Background telemetry — explicitly deprioritized
+const analytics = await fetch('/api/analytics', {
+  priority: 'low',
+});</code></pre>
+
+                <p>
+                    <strong>Why it matters:</strong> The <code>priority: 'low'</code> hint instructs
+                    the browser to hold off on background telemetry until core structural payloads
+                    are downloaded, significantly improving <strong>Largest Contentful Paint (LCP)</strong>.
+                </p>
+            </google-codelab-step>
+
+            <google-codelab-step label="Congratulations!" duration="0">
+                <p>
+                    You've seen how Modern Web Guidance transforms AI coding output from legacy
+                    bloat to native, high-performance web standards.
+                </p>
+
+                <p><strong>What you covered:</strong></p>
+                <ul>
+                    <li>✅ Installed Modern Web Guidance and set a Baseline target</li>
+                    <li>✅ Built a zero-JS tooltip using the Popover API + CSS Anchor Positioning</li>
+                    <li>✅ Fixed INP using <code>scheduler.yield()</code> instead of <code>setTimeout</code> hacks</li>
+                    <li>✅ Measured the bundle-size impact: 172 KB → &lt; 3 KB</li>
+                    <li>✅ Explored native passkeys and network priority as bonus patterns</li>
+                </ul>
+
+                <p><strong>Next Steps:</strong></p>
+                <ul>
+                    <li>Try the Agentic Web skill (WebMCP) for exposing structured app tools to AI agents</li>
+                    <li>Explore the full Modern Web Guidance skill library</li>
+                    <li>Set <code>Baseline: Widely Available 2024</code> to unlock more recent APIs with confidence</li>
+                </ul>
+            </google-codelab-step>
+
+            <google-codelab-step label="Resources &amp; Connect" duration="0">
+                <h2 is-upgraded>📚 Resources</h2>
+                <ul>
+                    <li>
+                        <strong>GitHub Repository</strong>:
+                        <a href="https://github.com/JesseMurah/Modern-Web-Guidance-Demo" target="_blank">
+                            Modern-Web-Guidance-Demo
+                        </a>
+                    </li>
+                    <li>
+                        <strong>Modern Web Guidance</strong>:
+                        <a href="https://developer.chrome.com" target="_blank">developer.chrome.com</a>
+                    </li>
+                    <li>
+                        <strong>Popover API</strong>:
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Popover_API" target="_blank">MDN</a>
+                    </li>
+                    <li>
+                        <strong>CSS Anchor Positioning</strong>:
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" target="_blank">MDN</a>
+                    </li>
+                    <li>
+                        <strong>scheduler.yield()</strong>:
+                        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield" target="_blank">MDN</a>
+                    </li>
+                </ul>
+
+                <h2 is-upgraded>🤝 Connect With the Author</h2>
+                <p><strong>Jesse Murah</strong></p>
+                <ul>
+                    <li>
+                        💼 LinkedIn:
+                        <a href="https://linkedin.com/in/JesseMurah" target="_blank">Jesse Murah</a>
+                    </li>
+                    <li>
+                        🐙 GitHub:
+                        <a href="https://github.com/JesseMurah" target="_blank">@JesseMurah</a>
+                    </li>
+                </ul>
+
+                <hr />
+
+                <p><strong>Credit to Unstacked Labs.</strong></p>
+                <p>Have Fun! 🚀</p>
+            </google-codelab-step>
+        </google-codelab>
+
+        <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+        <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+        <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+        <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+        <script src="//support.google.com/inapp/api.js"></script>
+    </body>
+</html>
