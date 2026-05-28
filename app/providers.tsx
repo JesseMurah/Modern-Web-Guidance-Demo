@@ -14,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       if (!HTMLElement.prototype.hasOwnProperty("popover")) {
         await import("@oddbird/popover-polyfill")
       }
-      if (!(HTMLButtonElement.prototype as unknown as Record<string, unknown>)["interestForElement"]) {
+      if (!("interestForElement" in HTMLButtonElement.prototype)) {
         await import("interestfor")
       }
     }
