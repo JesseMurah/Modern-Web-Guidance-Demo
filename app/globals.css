@@ -127,6 +127,42 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Trend badge interest-triggered tooltips */
+.trend-trigger {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+.trend-tooltip {
+  margin: unset;
+  position-try: flip-block;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px oklch(0 0 0 / 10%);
+}
+
+.trend-trigger-revenue  { anchor-name: --trend-revenue; }
+.trend-trigger-customers { anchor-name: --trend-customers; }
+.trend-trigger-accounts  { anchor-name: --trend-accounts; }
+.trend-trigger-growth    { anchor-name: --trend-growth; }
+
+.trend-tooltip-revenue   { position-anchor: --trend-revenue;   top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-customers { position-anchor: --trend-customers; top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-accounts  { position-anchor: --trend-accounts;  top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-growth    { position-anchor: --trend-growth;    top: anchor(top); left: anchor(center); translate: -50% -115%; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
