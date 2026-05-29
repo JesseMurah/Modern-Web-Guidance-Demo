@@ -180,27 +180,15 @@ function Sidebar({
 
   if (isMobile) {
     return (
-      <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-        <SheetContent
-          dir={dir}
-          data-sidebar="sidebar"
-          data-slot="sidebar"
-          data-mobile="true"
-          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
-          style={
-            {
-              "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
-          side={side}
-        >
-          <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
-          </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
-        </SheetContent>
-      </Sheet>
+      <MobileSidebarDrawer
+        open={openMobile}
+        onOpenChange={setOpenMobile}
+        data-sidebar="sidebar"
+        data-slot="sidebar"
+        data-mobile="true"
+      >
+        {children}
+      </MobileSidebarDrawer>
     )
   }
 
@@ -671,6 +659,119 @@ function SidebarMenuSubButton({
       )}
       {...props}
     />
+  )
+}
+
+function MobileSidebarDrawer({
+  open,
+  onOpenChange,
+  children,
+  ...props
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  children: React.ReactNode
+} & React.HTMLAttributes<HTMLDivElement>) {
+  const drawerRef = React.useRef<HTMLDivElement>(null)
+  const scrollerRef = React.useRef<HTMLDivElement>(null)
+  const sheetRef = React.useRef<HTMLDivElement>(null)
+
+  const closeDrawer = React.useCallback(() => {
+    const scroller = scrollerRef.current
+    if (!scroller) return
+    scroller.scrollTo({ left: scroller.offsetWidth, behavior: "auto" })
+  }, [])
+
+  const openDrawer = React.useCallback(async () => {
+    const drawer = drawerRef.current
+    const scroller = scrollerRef.current
+    if (!drawer || !scroller) return
+    drawer.showPopover()
+    if (!CSS.supports("scroll-initial-target", "nearest")) {
+      scroller.scrollTo({ left: scroller.offsetWidth, behavior: "instant" })
+      await new Promise<void>((r) =>
+        requestAnimationFrame(() => { requestAnimationFrame(() => r()) })
+      )
+    }
+    scroller.scrollTo({ left: 0, behavior: "auto" })
+  }, [])
+
+  // Sync open prop → drawer
+  React.useEffect(() => {
+    if (open) openDrawer()
+    else closeDrawer()
+  }, [open, openDrawer, closeDrawer])
+
+  // IntersectionObserver: detect when sheet leaves viewport after swipe
+  React.useEffect(() => {
+    const drawer = drawerRef.current
+    const sheet = sheetRef.current
+    if (!drawer || !sheet) return
+    const visibleThreshold = 1 / window.innerWidth
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries.at(-1)
+        if (!entry) return
+        if (entry.intersectionRatio < visibleThreshold) {
+          drawer.hidePopover()
+          onOpenChange(false)
+        }
+      },
+      { root: drawer, threshold: [visibleThreshold, 1] }
+    )
+    observer.observe(sheet)
+    return () => observer.disconnect()
+  }, [onOpenChange])
+
+  // Backdrop fade fallback for Firefox (no scroll-driven animations)
+  React.useEffect(() => {
+    const drawer = drawerRef.current
+    const scroller = scrollerRef.current
+    const sheet = sheetRef.current
+    if (!drawer || !scroller || !sheet) return
+    if (CSS.supports("animation-timeline: scroll()")) return
+    const handleScroll = () => {
+      const ratio = 1 - scroller.scrollLeft / sheet.offsetWidth
+      drawer.style.setProperty("--sidebar-drawer-backdrop", String(Math.max(0, ratio)))
+    }
+    scroller.addEventListener("scroll", handleScroll, { passive: true })
+    return () => scroller.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  // Click outside sheet → close
+  React.useEffect(() => {
+    const drawer = drawerRef.current
+    const sheet = sheetRef.current
+    if (!drawer || !sheet) return
+    const handleClick = (e: MouseEvent) => {
+      if (!sheet.contains(e.target as Node)) closeDrawer()
+    }
+    drawer.addEventListener("click", handleClick)
+    return () => drawer.removeEventListener("click", handleClick)
+  }, [closeDrawer])
+
+  // Escape → close
+  React.useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeDrawer()
+    }
+    document.addEventListener("keydown", handleKeydown)
+    return () => document.removeEventListener("keydown", handleKeydown)
+  }, [closeDrawer])
+
+  return (
+    <div ref={drawerRef} popover="manual" className="sidebar-drawer" {...props}>
+      <div ref={scrollerRef} className="sidebar-drawer-scroller">
+        <div
+          ref={sheetRef}
+          tabIndex={-1}
+          className="sidebar-drawer-sheet bg-sidebar text-sidebar-foreground"
+          style={{ "--sidebar-width-mobile": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
+        >
+          <div className="flex h-full w-full flex-col">{children}</div>
+        </div>
+      </div>
+    </div>
   )
 }
 
