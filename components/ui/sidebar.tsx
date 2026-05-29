@@ -760,13 +760,18 @@ function MobileSidebarDrawer({
   }, [closeDrawer])
 
   return (
-    <div ref={drawerRef} popover="manual" className="sidebar-drawer" {...props}>
+    <div
+      ref={drawerRef}
+      popover="manual"
+      className="sidebar-drawer"
+      style={{ "--sidebar-width-mobile": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
+      {...props}
+    >
       <div ref={scrollerRef} className="sidebar-drawer-scroller">
         <div
           ref={sheetRef}
           tabIndex={-1}
           className="sidebar-drawer-sheet bg-sidebar text-sidebar-foreground"
-          style={{ "--sidebar-width-mobile": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
         >
           <div className="flex h-full w-full flex-col">{children}</div>
         </div>
