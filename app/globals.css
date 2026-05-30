@@ -127,6 +127,113 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* Mobile sidebar swipe drawer */
+.sidebar-drawer {
+  --sidebar-drawer-backdrop: 0;
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  margin: unset;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+}
+
+.sidebar-drawer::backdrop {
+  background: #000;
+  opacity: calc(var(--sidebar-drawer-backdrop) / 2);
+}
+
+.sidebar-drawer-scroller {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--sidebar-width-mobile) 100dvw;
+  overflow-x: scroll;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  height: 100dvh;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar-drawer-scroller {
+    scroll-behavior: smooth;
+  }
+}
+
+.sidebar-drawer-scroller::after {
+  content: '';
+  scroll-snap-align: end;
+  scroll-initial-target: nearest;
+}
+
+.sidebar-drawer-sheet {
+  height: 100svh;
+  scroll-snap-align: start;
+  scrollbar-width: none;
+  overflow-y: auto;
+}
+
+@supports (animation-timeline: scroll()) {
+  .sidebar-drawer {
+    timeline-scope: --sidebar-drawer-fade;
+    animation: sidebar-drawer-backdrop-fade linear both;
+    animation-timeline: --sidebar-drawer-fade;
+  }
+  .sidebar-drawer-scroller {
+    scroll-timeline: --sidebar-drawer-fade x;
+  }
+  @property --sidebar-drawer-backdrop {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+  @keyframes sidebar-drawer-backdrop-fade {
+    0%   { --sidebar-drawer-backdrop: 1 }
+    100% { --sidebar-drawer-backdrop: 0 }
+  }
+}
+
+/* Trend badge interest-triggered tooltips */
+.trend-trigger {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+}
+
+.trend-tooltip {
+  margin: unset;
+  position-try: flip-block;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px oklch(0 0 0 / 10%);
+}
+
+.trend-trigger-revenue  { anchor-name: --trend-revenue; }
+.trend-trigger-customers { anchor-name: --trend-customers; }
+.trend-trigger-accounts  { anchor-name: --trend-accounts; }
+.trend-trigger-growth    { anchor-name: --trend-growth; }
+
+.trend-tooltip-revenue   { position-anchor: --trend-revenue;   top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-customers { position-anchor: --trend-customers; top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-accounts  { position-anchor: --trend-accounts;  top: anchor(top); left: anchor(center); translate: -50% -115%; }
+.trend-tooltip-growth    { position-anchor: --trend-growth;    top: anchor(top); left: anchor(center); translate: -50% -115%; }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
