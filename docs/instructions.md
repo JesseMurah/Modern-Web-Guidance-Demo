@@ -327,7 +327,8 @@ await fetch('/api/analytics/event', {
 
 ### 📚 Resources
 
-- **GitHub Repository**: [Modern-Web-Guidance-Demo](https://github.com/JesseMurah/Modern-Web-Guidance-Demo)
+- **My Implemetation**: [Modern-Web-Guidance-Demo](https://github.com/JesseMurah/Modern-Web-Guidance-Demo)
+- **Modern Web Guidance**: [Modern-Web-Guidance](https://developer.chrome.com/docs/modern-web-guidance)
 - **Popover API**: [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Popover_API)
 - **CSS Anchor Positioning**: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning)
 - **scheduler.yield()**: [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler/yield)
@@ -342,6 +343,6 @@ await fetch('/api/analytics/event', {
 
 ---
 
-**Credit to Unstacked Labs.**
+<!--**Credit to Unstacked Labs.**-->
 
 Have Fun! 🚀

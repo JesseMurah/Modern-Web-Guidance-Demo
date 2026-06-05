@@ -6,7 +6,7 @@
   "updated": "2026-05-28T00:00:00+00:00",
   "id": "docs",
   "duration": 17,
-  "title": "Equipping AI Coding Agents with Chrome's Modern Web Guidance",
+  "title": "Equipping AI Coding Agents with Chrome Modern Web Guidance",
   "summary": "Learn how Chrome's Modern Web Guidance upgrades AI coding agents to use native, high-performance web standards — eliminating JavaScript bloat and unlocking CSS-native UI physics.",
   "source": "instructions.md",
   "theme": "",
